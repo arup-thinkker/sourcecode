@@ -38,9 +38,11 @@ RESPONSE in JSON
 {
 "status":true,
 "message":"Account Created",
-"auth":            {"user_id":112352,"token":"8d4901f7de0e902a7742f615a72d8f7eca51475c4bb01e77b5a8ae5e32546da622ccdc5f9ce0cbdd735c2d90f637731eb55420c78a6f8a11dbad13714db0a889"},
-"user":
-{"f_name":"arup","l_name":"sarkar","email":"arup@email.in"}
+"auth":{"user_id":112352,
+        "token":"8d4901f7de0e902a7742f615a72d8f7eca51475c4bb01e77b5a8ae5e32546da622ccdc5f9ce0cbdd735c2d90f637731eb55420c78a6f8a11dbad13714db0a889"},
+"user":{"f_name":"arup",
+        "l_name":"sarkar",
+        "email":"arup@email.in"}
 }
 
 Sample Code //
