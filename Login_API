@@ -1,0 +1,123 @@
+Login / Signup API is now LIVE.
+
+For those who want to use our Login Template :
+Paste this line inside <head> </head> tag
+
+<script src="https://cdn.thinkker.in/js/api/v1/auto-login.js"></script>
+
+Paste this div where you want to show Login button inside <body> tag  <div id="login-div"></div>
+_________________________________________________________________________________
+
+For those who want to use own Template :
+Paste this line inside <head> tag
+
+<script src="https://cdn.thinkker.in/js/api/v1/manual-login.js"></script>
+
+Procedure -> Make a Ajax Request.
+Method -> POST
+// Don't worry "loginApiKey" will be automatically  Set
+
+Sign up URL: https://api.thinkker.in/public/v1/signup.php
+
+Parameters:
+api_key: loginApiKey,
+f_name: First Name Field value,
+l_name: Last Name Field Value,
+email: email Field Value,
+password: password field value
+
+Login URL: https://api.thinkker.in/public/v1/login.php
+
+Parameters:
+api_key: loginApiKey,
+email: email Field Value,
+password: password field value
+
+RESPONSE in JSON
+
+{
+"status":true,
+"message":"Account Created",
+"auth":            {"user_id":112352,"token":"8d4901f7de0e902a7742f615a72d8f7eca51475c4bb01e77b5a8ae5e32546da622ccdc5f9ce0cbdd735c2d90f637731eb55420c78a6f8a11dbad13714db0a889"},
+"user":
+{"f_name":"arup","l_name":"sarkar","email":"arup@email.in"}
+}
+
+Sample Code //
+var apiHost = 'https://api.thinkker.in/public/v1/';
+
+function ini_login() {
+    var email = $("#login_email").val();
+    var password = $("#login_password").val();
+
+    $.ajax({
+        url: apiHost + 'login.php',
+        type: "POST",
+        data: { api_key: loginApiKey, email: email, password: password },
+        cache: false,
+        beforeSend: function() {
+            $("#login_activity").html('<i class="fa fa-spinner fa-spin"></i>&nbsp; Logging In');
+        },
+        success: function(data) {
+            if (data.status == true) {
+                let jsonstring = JSON.stringify(data);
+                localStorage.setItem("logindata", jsonstring);
+                $("#login-div").html('<button class="tnkr_btn tnkr_green" onclick="logout()">Welcome ' + data.user.f_name + '</button>');
+                setCookie("user", data.auth.user_id, 7);
+                setCookie("token", data.auth.token, 7);
+            } else {
+                $("#login_activity").html(data.message);
+            }
+        },
+        error: function() {
+            $("#login_activity").html('<i class="fa fa-spinner fa-spin"></i>&nbsp; Retrying ... ');
+            ini_login();
+        }
+    })
+}
+
+function ini_signup() {
+    var email = $.trim($("#signup_email").val());
+    var password = $("#signup_password").val();
+    var fname = $.trim($("#signup_f_name").val());
+    var lname = $.trim($("#signup_l_name").val());
+    if (fname == "") {
+        alert("Enter First Name");
+        $("#signup_f_name").focus();
+    } else if (lname == "") {
+        alert("Enter Last Name");
+        $("#signup_l_name").focus();
+    } else if (validateEmail(email) === false) {
+        alert("Enter Valid Email ID");
+        $("#signup_email").focus();
+    } else if (password == "") {
+        alert("Enter Password");
+        $("#signup_password").focus();
+    } else {
+        $.ajax({
+            url: apiHost + 'signup.php',
+            type: "POST",
+            data: { api_key: loginApiKey, f_name: fname, l_name: lname, email: email, password: password },
+            cache: false,
+            beforeSend: function() {
+                $("#login_activity").html('<i class="fa fa-spinner fa-spin"></i>&nbsp; Creating Account');
+            },
+            success: function(data) {
+                if (data.status == true) {
+                    let jsonstring = JSON.stringify(data);
+                    localStorage.setItem("logindata", jsonstring);
+                    $("#login-div").html('<button class="tnkr_btn tnkr_green" onclick="logout()">Welcome ' + data.user.f_name + '</button>');
+                    setCookie("user", data.auth.user_id, 7);
+                    setCookie("token", data.auth.token, 7);
+                } else {
+                    $("#login_activity").html(data.message);
+                }
+            },
+            error: function() {
+                $("#login_activity").html('<i class="fa fa-spinner fa-spin"></i>&nbsp; Retrying ... ');
+                ini_signup();
+            }
+        })
+    }
+}
+
